@@ -1,0 +1,35 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: EventAlex
+    network: mumbai
+    source:
+      address: "0x157E1c59DE5c6769F7cA4B105D266b97478ccCab"
+      abi: EventAlex
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - ConfirmedAttendee
+        - DepositsPaidOut
+        - NewEventCreated
+        - NewRSVP
+        - confirmAttendees
+      abis:
+        - name: EventAlex
+          file: ./abis/EventAlex.json
+      eventHandlers:
+        - event: ConfirmedAttendee(uint256,address)
+          handler: handleConfirmedAttendee
+        - event: DepositsPaidOut(uint256)
+          handler: handleDepositsPaidOut
+        - event: NewEventCreated(uint256,address,uint256,uint256,uint256)
+          handler: handleNewEventCreated
+        - event: NewRSVP(uint256,address)
+          handler: handleNewRSVP
+        - event: confirmAttendees(uint256,address)
+          handler: handleconfirmAttendees
+      file: ./src/event-alex.ts
