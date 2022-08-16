@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Address, ipfs, json } from "@graphprotocol/graph-ts"
 import {
   EventAlex,
   ConfirmedAttendee,
@@ -7,54 +7,109 @@ import {
   NewRSVP,
   confirmAttendees
 } from "../generated/EventAlex/EventAlex"
-import { ExampleEntity } from "../generated/schema"
+import { Account, RSVP, Confirmation, Event } from "../generated/schema"
+import { integer } from "@protofire/subgraph-toolkit"
 
 export function handleConfirmedAttendee(event: ConfirmedAttendee): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
 
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
-  }
 
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
-
-  // Entity fields can be set based on event parameters
-  entity.eventID = event.params.eventID
-  entity.attendeeAddress = event.params.attendeeAddress
-
-  // Entities can be written to the store with `.save()`
-  entity.save()
-
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
-
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // None
 }
 
-export function handleDepositsPaidOut(event: DepositsPaidOut): void {}
+export function handleDepositsPaidOut(event: DepositsPaidOut): void {
 
-export function handleNewEventCreated(event: NewEventCreated): void {}
+}
 
-export function handleNewRSVP(event: NewRSVP): void {}
+export function handleNewEventCreated(event: NewEventCreated): void {
 
-export function handleconfirmAttendees(event: confirmAttendees): void {}
+  
+
+  let newEvent = Event.load(event.params.eventID.toHex());
+
+  if (newEvent == null) {
+    newEvent = new Event(event.params.eventID.toHex());
+    newEvent.eventID = event.params.eventID;
+    newEvent.eventOwner = event.params.creatorAddress;
+    newEvent.eventTimestamp = event.params.eventTimestamp;
+    newEvent.maxCapacity = event.params.maxCapacity;
+    newEvent.deposit = event.params.deposit;
+    newEvent.paidOut = false;
+    newEvent.totalConfirmedAttendees = integer.ZERO;
+    newEvent.totalRSVPs = integer.ZERO;
+    newEvent.save();
+  }
+
+}
+
+export function handleNewRSVP(event: NewRSVP): void {
+  
+  let id = event.params.eventID.toHex() + event.params.attendeeAddress.toHex();
+  let rsvp = RSVP.load(id);
+
+  let _event = Event.load(event.params.eventID.toHex());
+
+  if (rsvp == null && _event != null) {
+    let account = getOrCreateAccount(event.params.attendeeAddress);
+
+    rsvp = new RSVP(id);
+
+    rsvp.attendee = account.id;
+    rsvp.event = _event.id;
+    rsvp.save();
+
+    _event.totalRSVPs = integer.increment(_event.totalRSVPs);
+    _event.save();
+
+    account.totalRSVPs = integer.increment(account.totalRSVPs);
+    account.save();
+  }
+}
+
+function getOrCreateAccount(address: Address): Account {
+  let account = Account.load(address.toHex());
+
+  if (account == null) {
+    account = new Account(address.toHex());
+
+    account.totalAttendedEvents = integer.ZERO;
+    account.totalRSVPs = integer.ZERO;
+    account.save();
+  }
+
+  return account;
+}
+
+export function handleconfirmAttendees(event: confirmAttendees): void {
+
+ 
+  let id = event.params.eventId.toHex() + event.params.attendee.toHex();
+
+  let rsvp = RSVP.load(id);
+  let confirm = Confirmation.load(id);
+
+  if (confirm == null && rsvp != null) {
+    let _event = Event.load(event.params.eventId.toHex());
+
+    if (_event != null) {
+      confirm = new Confirmation(id);
+
+      confirm.attendee = event.params.attendee.toHex();
+      confirm.event = _event.id;
+      confirm.save();
+
+      _event.totalConfirmedAttendees = integer.increment(_event.totalConfirmedAttendees);
+      _event.save();
+
+      let account = Account.load(event.params.attendee.toHex());
+
+      if (account != null) {
+        account.totalAttendedEvents = integer.increment(account.totalAttendedEvents);
+        account.save();
+      }
+    }
+
+
+  }
+
+
+}
