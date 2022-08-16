@@ -1,0 +1,253 @@
+[
+  {
+    "inputs": [],
+    "name": "AlreadyCheckdIn",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AlreadyRsvpd",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "EventEnded",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "EventNotStarted",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "requiredDeposit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "sentDeposit",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidDeposit",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MaxCapicityReached",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "Unauthorized",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "eventID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "attendeeAddress",
+        "type": "address"
+      }
+    ],
+    "name": "ConfirmedAttendee",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "eventID",
+        "type": "uint256"
+      }
+    ],
+    "name": "DepositsPaidOut",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "eventID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "creatorAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "eventTimestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "maxCapacity",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "deposit",
+        "type": "uint256"
+      }
+    ],
+    "name": "NewEventCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "eventID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "attendeeAddress",
+        "type": "address"
+      }
+    ],
+    "name": "NewRSVP",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "eventId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "attendee",
+        "type": "address"
+      }
+    ],
+    "name": "confirmAttendees",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "eventId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address[]",
+        "name": "attendees",
+        "type": "address[]"
+      }
+    ],
+    "name": "bulkCheckInAttendees",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "eventId",
+        "type": "uint256"
+      }
+    ],
+    "name": "bulkCheckInAttendees",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "eventId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_attendee",
+        "type": "address"
+      }
+    ],
+    "name": "checkIn",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_time",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxCapacity",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_deposit",
+        "type": "uint256"
+      }
+    ],
+    "name": "createEvent",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "eventId",
+        "type": "uint256"
+      }
+    ],
+    "name": "rsvp",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "eventId",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
